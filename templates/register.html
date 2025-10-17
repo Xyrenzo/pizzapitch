@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+        }
+
+        .register-box {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 50px 40px;
+            box-shadow: 
+                0 0 20px rgba(255, 215, 0, 0.3),
+                0 0 40px rgba(255, 215, 0, 0.2),
+                0 0 60px rgba(255, 215, 0, 0.1),
+                0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .register-box::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700, #FFA500);
+            border-radius: 20px;
+            z-index: -1;
+            animation: glow 3s ease-in-out infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 
+                    0 0 20px rgba(255, 215, 0, 0.5),
+                    0 0 40px rgba(255, 215, 0, 0.3),
+                    0 0 60px rgba(255, 215, 0, 0.2);
+            }
+            50% {
+                box-shadow: 
+                    0 0 30px rgba(255, 215, 0, 0.7),
+                    0 0 60px rgba(255, 215, 0, 0.5),
+                    0 0 90px rgba(255, 215, 0, 0.3);
+            }
+        }
+
+        h2 {
+            text-align: center;
+            color: #2d2d2d;
+            margin-bottom: 10px;
+            font-size: 32px;
+            font-weight: 600;
+            text-shadow: 
+                0 0 10px rgba(255, 215, 0, 0.3),
+                0 0 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 35px;
+            font-size: 14px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: white;
+            color: #333;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #FFD700;
+            box-shadow: 
+                0 0 0 3px rgba(255, 215, 0, 0.1),
+                0 0 15px rgba(255, 215, 0, 0.3),
+                0 0 30px rgba(255, 215, 0, 0.2),
+                0 0 45px rgba(255, 215, 0, 0.1);
+        }
+
+        input.error {
+            border-color: #ff4444;
+            box-shadow: 
+                0 0 0 3px rgba(255, 68, 68, 0.1),
+                0 0 15px rgba(255, 68, 68, 0.4),
+                0 0 30px rgba(255, 68, 68, 0.2),
+                0 0 45px rgba(255, 68, 68, 0.1);
+        }
+
+        input::placeholder {
+            color: #999;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 400;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #1a1a1a;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 
+                0 0 20px rgba(255, 215, 0, 0.4),
+                0 0 40px rgba(255, 215, 0, 0.2),
+                0 4px 15px rgba(255, 165, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 0 30px rgba(255, 215, 0, 0.6),
+                0 0 60px rgba(255, 215, 0, 0.4),
+                0 0 90px rgba(255, 215, 0, 0.2),
+                0 6px 20px rgba(255, 165, 0, 0.4);
+        }
+
+        .btn-register:active {
+            transform: translateY(0);
+        }
+
+        .btn-register:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 
+                0 0 20px rgba(255, 215, 0, 0.2),
+                0 0 40px rgba(255, 215, 0, 0.1),
+                0 4px 15px rgba(255, 165, 0, 0.2);
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #FFD700;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .login-link a:hover {
+            color: #FFA500;
+            text-shadow: 
+                0 0 15px rgba(255, 215, 0, 0.5),
+                0 0 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 30px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #FFD700, transparent);
+        }
+
+        .divider span {
+            padding: 0 15px;
+            color: #999;
+            font-size: 13px;
+        }
+
+        .error-message {
+            display: none;
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+            box-shadow: 
+                0 0 15px rgba(255, 68, 68, 0.6),
+                0 0 30px rgba(255, 68, 68, 0.4),
+                0 0 45px rgba(255, 68, 68, 0.2);
+            animation: errorGlow 2s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        @keyframes errorGlow {
+            0%, 100% {
+                box-shadow: 
+                    0 0 15px rgba(255, 68, 68, 0.6),
+                    0 0 30px rgba(255, 68, 68, 0.4),
+                    0 0 45px rgba(255, 68, 68, 0.2);
+            }
+            50% {
+                box-shadow: 
+                    0 0 20px rgba(255, 68, 68, 0.8),
+                    0 0 40px rgba(255, 68, 68, 0.6),
+                    0 0 60px rgba(255, 68, 68, 0.3);
+            }
+        }
+
+        .error-message::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 5px solid #ff4444;
+        }
+
+        .password-match .error-message {
+            display: block;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="register-box">
+            <h2>Register</h2>
+            <p class="subtitle">Create your account</p>
+
+            <form id="registerForm" action="/register" method="post">
+                <div class="input-group">
+                    <label for="name">Name</label>
+                    <input name="username" type="text" id="name" placeholder="Enter your name" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input name="email" type="email" id="email" placeholder="example@mail.com" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <input name="password" type="password" id="password" placeholder="Minimum 8 characters" required minlength="8">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="confirm-password" placeholder="Repeat your password" required>
+                        <div class="error-message">Пароль не похож</div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-register" id="submitBtn">Register</button>
+            </form>
+
+            <div class="divider">
+                <span>or</span>
+            </div>
+
+            <div class="login-link">
+                Already have an account? <a href="/login">Login</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirm-password');
+            const submitBtn = document.getElementById('submitBtn');
+            const confirmWrapper = confirmPasswordInput.parentElement;
+
+            function validatePasswords() {
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                
+                if (confirmPassword === '') {
+                    // Если поле пустое, убираем ошибку
+                    confirmWrapper.classList.remove('password-match');
+                    confirmPasswordInput.classList.remove('error');
+                    submitBtn.disabled = false;
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    // Пароли не совпадают
+                    confirmWrapper.classList.add('password-match');
+                    confirmPasswordInput.classList.add('error');
+                    submitBtn.disabled = true;
+                } else {
+                    // Пароли совпадают
+                    confirmWrapper.classList.remove('password-match');
+                    confirmPasswordInput.classList.remove('error');
+                    submitBtn.disabled = false;
+                }
+            }
+
+            // Слушаем изменения в обоих полях пароля
+            passwordInput.addEventListener('input', validatePasswords);
+            confirmPasswordInput.addEventListener('input', validatePasswords);
+
+            // Также проверяем при загрузке страницы (на случай автозаполнения)
+            validatePasswords();
+
+            // Дополнительная валидация при отправке формы
+            document.getElementById('registerForm').addEventListener('submit', function(e) {
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                
+                if (password !== confirmPassword) {
+                    e.preventDefault();
+                    confirmWrapper.classList.add('password-match');
+                    confirmPasswordInput.classList.add('error');
+                    confirmPasswordInput.focus();
+                    
+                    // Анимация "тряски" для привлечения внимания
+                    confirmWrapper.style.animation = 'shake 0.5s ease-in-out';
+                    setTimeout(() => {
+                        confirmWrapper.style.animation = '';
+                    }, 500);
+                }
+            });
+
+            // Добавляем CSS для анимации тряски
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    25% { transform: translateX(-5px); }
+                    75% { transform: translateX(5px); }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>

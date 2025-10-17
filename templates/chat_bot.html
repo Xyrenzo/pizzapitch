@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerGuide - Чат-бот</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            padding: 20px;
+            padding-top: 100px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 20px;
+            height: calc(100vh - 140px);
+        }
+
+        /* Стили хедера */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3),
+              0 0 40px rgba(255, 215, 0, 0.2), 0 0 60px rgba(255, 215, 0, 0.1),
+              0 8px 32px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            padding: 15px 0;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d2d2d;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo::before {
+            content: "🎯";
+            font-size: 28px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-link {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 25px;
+            text-decoration: none;
+            color: #2d2d2d;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: "";
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            background: linear-gradient(45deg, #ffd700, #ffa500);
+            border-radius: 25px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4),
+              0 0 40px rgba(255, 215, 0, 0.2);
+        }
+
+        .nav-link:hover::before {
+            opacity: 0.3;
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            color: #1a1a1a;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5),
+              0 0 30px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Стили боковой панели с чатами */
+        .chats-sidebar {
+            width: 300px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3),
+              0 0 40px rgba(255, 215, 0, 0.2), 0 0 60px rgba(255, 215, 0, 0.1),
+              0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chats-sidebar::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ffd700, #ffa500, #ffd700, #ffa500);
+            border-radius: 20px;
+            z-index: -1;
+            animation: glow 3s ease-in-out infinite;
+            opacity: 0.6;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-title {
+            color: #2d2d2d;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .new-chat-btn {
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            color: #1a1a1a;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .new-chat-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .chats-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chat-item {
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .chat-item:hover {
+            border-color: #ffd700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+        }
+
+        .chat-item.active {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.1));
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .chat-title {
+            font-weight: 600;
+            color: #2d2d2d;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .chat-date {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .delete-chat {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff6b6b;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .chat-item:hover .delete-chat {
+            opacity: 1;
+        }
+
+        /* Стили основного чата */
+        .chat-main {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3),
+              0 0 40px rgba(255, 215, 0, 0.2), 0 0 60px rgba(255, 215, 0, 0.1),
+              0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-main::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ffd700, #ffa500, #ffd700, #ffa500);
+            border-radius: 20px;
+            z-index: -1;
+            animation: glow 3s ease-in-out infinite;
+            opacity: 0.6;
+        }
+
+        .chat-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .chat-title-main {
+            color: #2d2d2d;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3),
+              0 0 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .chat-subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 15px;
+            border: 2px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .message {
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            border-radius: 15px;
+            max-width: 80%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .message.user {
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            color: #1a1a1a;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.assistant {
+            background: rgba(255, 255, 255, 0.9);
+            color: #2d2d2d;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-content {
+            line-height: 1.5;
+        }
+
+        .message-time {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 15px;
+            resize: none;
+            min-height: 60px;
+            max-height: 120px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: #ffd700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            border: none;
+            padding: 15px 25px;
+            border-radius: 15px;
+            color: #1a1a1a;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+            min-width: 100px;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            margin-right: auto;
+            max-width: 80%;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #ffd700;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.5),
+                  0 0 40px rgba(255, 215, 0, 0.3), 0 0 60px rgba(255, 215, 0, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(255, 215, 0, 0.7),
+                  0 0 60px rgba(255, 215, 0, 0.5), 0 0 90px rgba(255, 215, 0, 0.3);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #666;
+            padding: 40px;
+            font-size: 16px;
+        }
+
+        .no-chats {
+            text-align: center;
+            color: #666;
+            padding: 40px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-container">
+            <a href="/" class="logo">CareerGuide</a>
+            <nav class="nav-menu">
+                <a href="/questions?user_id={{ user_id }}" class="nav-link">Тест</a>
+                <a href="/results?user_id={{ user_id }}" class="nav-link">Результаты</a>
+                <a href="/chat_bot?user_id={{ user_id }}" class="nav-link active">Чат-бот</a>
+                <a href="/histories?user_id={{ user_id }}" class="nav-link">История</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Боковая панель с чатами -->
+        <div class="chats-sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">Мои чаты</div>
+                <button class="new-chat-btn" onclick="createNewChat()">+ Новый</button>
+            </div>
+            <div class="chats-list" id="chatsList">
+                <div class="no-chats">Создайте первый чат</div>
+            </div>
+        </div>
+
+        <!-- Основная область чата -->
+        <div class="chat-main">
+            <div class="chat-header">
+                <h1 class="chat-title-main">CareerGuide Assistant</h1>
+                <p class="chat-subtitle">Ваш персональный карьерный консультант</p>
+            </div>
+
+            <div class="messages-container" id="messagesContainer">
+                <div class="empty-state">
+                    Выберите чат или создайте новый, чтобы начать общение
+                </div>
+            </div>
+
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+
+            <div class="input-container">
+                <textarea 
+                    class="message-input" 
+                    id="messageInput" 
+                    placeholder="Напишите ваш вопрос о карьере или профессиональном развитии..."
+                    rows="1"
+                    onkeydown="handleKeydown(event)"
+                ></textarea>
+                <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>Отправить</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentChatId = null;
+        let chats = [];
+
+        // Загрузка при старте
+        document.addEventListener('DOMContentLoaded', function() {
+            loadChats();
+            highlightActivePage();
+        });
+
+        // Загрузка списка чатов
+        async function loadChats() {
+            try {
+                const response = await fetch(`/chat/chats?user_id={{ user_id }}`);
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    chats = data.chats;
+                    renderChatsList();
+                    
+                    if (data.active_chat) {
+                        setActiveChat(data.active_chat.id);
+                    } else if (chats.length > 0) {
+                        setActiveChat(chats[0].id);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading chats:', error);
+            }
+        }
+
+        // Отрисовка списка чатов
+        function renderChatsList() {
+            const chatsList = document.getElementById('chatsList');
+            
+            if (chats.length === 0) {
+                chatsList.innerHTML = '<div class="no-chats">Создайте первый чат</div>';
+                return;
+            }
+            
+            chatsList.innerHTML = chats.map(chat => `
+                <div class="chat-item ${currentChatId === chat.id ? 'active' : ''}" 
+                     onclick="setActiveChat(${chat.id})">
+                    <div class="chat-title">${chat.title}</div>
+                    <div class="chat-date">${formatDate(chat.updated_at)}</div>
+                    <button class="delete-chat" onclick="deleteChat(${chat.id}, event)">×</button>
+                </div>
+            `).join('');
+        }
+
+        // Создание нового чата
+        async function createNewChat() {
+            try {
+                const response = await fetch(`/chat/create?user_id={{ user_id }}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ title: 'Новый чат' })
+                });
+                
+                const data = await response.json();
+                if (data.status === 'success') {
+                    await loadChats();
+                    setActiveChat(data.chat_id);
+                }
+            } catch (error) {
+                console.error('Error creating chat:', error);
+            }
+        }
+
+        // Установка активного чата
+        async function setActiveChat(chatId) {
+            try {
+                const response = await fetch(`/chat/${chatId}/set_active?user_id={{ user_id }}`, {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    currentChatId = chatId;
+                    renderChatsList();
+                    loadMessages();
+                }
+            } catch (error) {
+                console.error('Error setting active chat:', error);
+            }
+        }
+
+        // Удаление чата
+        async function deleteChat(chatId, event) {
+            event.stopPropagation();
+            
+            if (!confirm('Вы уверены, что хотите удалить этот чат?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/chat/${chatId}?user_id={{ user_id }}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                if (data.status === 'success') {
+                    await loadChats();
+                }
+            } catch (error) {
+                console.error('Error deleting chat:', error);
+            }
+        }
+
+        // Загрузка сообщений
+        async function loadMessages() {
+            if (!currentChatId) return;
+            
+            try {
+                const response = await fetch(`/chat/messages?user_id={{ user_id }}`);
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    renderMessages(data.messages);
+                }
+            } catch (error) {
+                console.error('Error loading messages:', error);
+            }
+        }
+
+        // Отрисовка сообщений
+        function renderMessages(messages) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            
+            if (messages.length === 0) {
+                messagesContainer.innerHTML = '<div class="empty-state">Начните общение с CareerGuide</div>';
+                return;
+            }
+            
+            messagesContainer.innerHTML = messages.map(msg => `
+                <div class="message ${msg.role}">
+                    <div class="message-content">${msg.content}</div>
+                    <div class="message-time">${formatTime(msg.created_at)}</div>
+                </div>
+            `).join('');
+            
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Отправка сообщения
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message || !currentChatId) return;
+            
+            // Добавляем сообщение пользователя
+            addMessageToChat('user', message);
+            input.value = '';
+            updateSendButton();
+            
+            // Показываем индикатор набора
+            showTypingIndicator();
+            
+            try {
+                const response = await fetch(`/chat/send?user_id={{ user_id }}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message })
+                });
+                
+                const data = await response.json();
+                hideTypingIndicator();
+                
+                if (data.status === 'success') {
+                    addMessageToChat('assistant', data.response);
+                    await loadChats(); // Обновляем список чатов (обновится дата)
+                } else {
+                    addMessageToChat('assistant', 'Извините, произошла ошибка. Попробуйте еще раз.');
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+                hideTypingIndicator();
+                addMessageToChat('assistant', 'Извините, произошла ошибка соединения.');
+            }
+        }
+
+        // Добавление сообщения в чат
+        function addMessageToChat(role, content) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            const emptyState = messagesContainer.querySelector('.empty-state');
+            
+            if (emptyState) {
+                emptyState.remove();
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            messageDiv.innerHTML = `
+                <div class="message-content">${content}</div>
+                <div class="message-time">${formatTime(new Date().toISOString())}</div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Показать индикатор набора
+        function showTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'block';
+            const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Скрыть индикатор набора
+        function hideTypingIndicator() {
+            document.getElementById('typingIndicator').style.display = 'none';
+        }
+
+        // Обработка клавиш
+        function handleKeydown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+            
+            updateSendButton();
+        }
+
+        // Обновление состояния кнопки отправки
+        function updateSendButton() {
+            const input = document.getElementById('messageInput');
+            const button = document.getElementById('sendBtn');
+            button.disabled = !input.value.trim() || !currentChatId;
+        }
+
+        // Форматирование даты
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ru-RU');
+        }
+
+        // Форматирование времени
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleTimeString('ru-RU', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+        }
+
+        // Подсветка активной страницы
+        function highlightActivePage() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll(".nav-link");
+
+            navLinks.forEach((link) => {
+                const linkPath = link.getAttribute("href").split("?")[0];
+                if (linkPath === currentPath) {
+                    link.classList.add("active");
+                } else {
+                    link.classList.remove("active");
+                }
+            });
+        }
+
+        // Авто-высота текстового поля
+        document.getElementById('messageInput').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+            updateSendButton();
+        });
+    </script>
+</body>
+</html>
