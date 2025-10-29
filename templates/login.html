@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход</title>
+    <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="stylesheet" href="/static/css/auth.css">
+</head>
+<body>
+    <div class="container">
+        <div class="login-box">
+            <h2>Login</h2>
+            <p class="subtitle">Enter your account</p>
+            <form id="loginForm" action="/login" method="post">
+                <div class="input-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="example@mail.com" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+
+                <div class="remember-forgot">
+                    
+                    <a href="#" class="forgot-password">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn-login">Login</button>
+            </form>
+
+            <div class="divider">
+                <span>or login with</span>
+            </div>
+
+            <div class="social-login">
+                <a href="/auth/google" class="social-btn google-btn">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                        <path d="M16.5 9.20455C16.5 8.56636 16.4318 7.95273 16.3068 7.36364H9V10.845H13.1932C13.0341 11.97 12.3636 12.9232 11.3864 13.5614V15.6191H14.1136C15.6227 14.2523 16.5 12.2045 16.5 9.20455Z" fill="#4285F4"/>
+                        <path d="M9 17C11.15 17 12.9636 16.2886 14.1136 15.1191L11.3864 13.0614C10.6545 13.5818 9.70455 13.9091 8.5 13.9091C6.47727 13.9091 4.77273 12.5795 4.15909 10.75H1.31818V12.8409C2.54545 15.2955 5.22727 17 9 17Z" fill="#34A853"/>
+                        <path d="M4.15909 10.75C3.95455 10.125 3.84091 9.45455 3.84091 8.75C3.84091 8.04545 3.95455 7.375 4.15909 6.75V4.65909H1.31818C0.613636 6.07955 0.227273 7.67045 0.227273 9.34091C0.227273 11.0114 0.613636 12.6023 1.31818 14.0227L4.15909 10.75Z" fill="#FBBC05"/>
+                        <path d="M9 3.59091C10.4091 3.59091 11.6477 4.11364 12.6136 5.13636L14.1705 3.57955C12.9636 2.45227 11.15 1.72727 9 1.72727C5.22727 1.72727 2.54545 4.43182 1.31818 7.47727L4.15909 9.56818C4.77273 7.73864 6.47727 6.40909 8.5 6.40909C9.70455 6.40909 10.6545 6.73636 11.3864 7.25682V9.31591H14.1136C13.9318 8.52273 13.5 7.84091 12.8864 7.34091V5.28182H10.1591C9.70455 4.92045 9.36364 4.70455 9 4.70455C8.63636 4.70455 8.29545 4.92045 7.84091 5.28182L4.84091 2.28182C5.79545 1.42045 7.34091 0.5 9 0.5C11.15 0.5 12.9636 1.22727 14.1136 2.38636L16.5 0C14.9318 -1.5 12.75 -2.5 9 -2.5C4.22727 -2.5 0.227273 1.22727 -1.5 5.5L1.34091 7.59091C2.56818 4.54545 5.25 1.84091 9 1.84091V3.59091Z" fill="#EA4335"/>
+                    </svg>
+                    Google
+                </a>
+                <a href="/auth/github" class="social-btn github-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    GitHub
+                </a>
+            </div>
+
+            <div class="register-link">
+                Do not have an account? <a href="/register">Register</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

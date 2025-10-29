@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отзывы</title>
+    <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="stylesheet" href="/static/css/reviews.css">
+</head>
+<body>
+    {% include "header.html" %}
+    
+    <div class="container">
+        <div class="quiz-box">
+            <!-- Статистика отзывов (данные будут загружены через JS) -->
+            <div class="reviews-stats">
+                <div class="average-rating">
+                    <div class="rating-number">0.0</div>
+                    <div class="rating-stars">
+                        <div class="stars">☆☆☆☆☆</div>
+                        <div class="rating-text">Средняя оценка</div>
+                    </div>
+                </div>
+                <div class="reviews-count">
+                    <div class="count-number">0</div>
+                    <div class="count-text">Всего отзывов</div>
+                </div>
+            </div>
+
+            <!-- Форма отзыва -->
+            <div id="reviewForm" class="review-form" style="display: none;">
+                <h3>Оставьте ваш отзыв</h3>
+                <div class="rating-input">
+                    <div class="stars-container">
+                        {% for i in range(5, 0, -1) %}
+                        <input type="radio" id="star{{ i }}" name="rating" value="{{ i }}">
+                        <label for="star{{ i }}" class="star-label">☆</label>
+                        {% endfor %}
+                    </div>
+                    <div class="rating-text">Ваша оценка: <span id="selectedRating">0</span>/5</div>
+                </div>
+                <textarea id="reviewComment" placeholder="Расскажите о вашем опыте..." maxlength="500"></textarea>
+                <div class="char-count"><span id="charCount">0</span>/500 символов</div>
+                <div class="form-actions">
+                    <button id="submitReview" class="btn btn-primary">Отправить отзыв</button>
+                </div>
+            </div>
+
+            <!-- Отзыв пользователя -->
+            <div id="userReview" class="user-review" style="display: none;">
+                <h3>Ваш отзыв</h3>
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="user-info">
+                            <span class="username">Вы</span>
+                            <div class="rating-stars">
+                                <span id="userReviewStars" class="stars active">☆☆☆☆☆</span>
+                            </div>
+                        </div>
+                        <div class="review-actions">
+                            <span id="userReviewTime" class="time-ago"></span>
+                            <button id="deleteReview" class="btn-delete">🗑️ Удалить</button>
+                        </div>
+                    </div>
+                    <div id="userReviewComment" class="review-comment">
+                        Загрузка...
+                    </div>
+                    <div class="review-footer">
+                        <button class="btn-like">
+                            <span class="like-icon">❤️</span>
+                            <span id="userReviewLikes" class="like-count">0</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Фильтры и сортировка -->
+            <div class="reviews-filters">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-sort="newest">Сначала новые</button>
+                    <button class="filter-btn" data-sort="oldest">Сначала старые</button>
+                    <button class="filter-btn" data-sort="highest">Высокий рейтинг</button>
+                    <button class="filter-btn" data-sort="lowest">Низкий рейтинг</button>
+                    <button class="filter-btn" data-sort="popular">Популярные</button>
+                </div>
+            </div>
+
+            <!-- Список отзывов -->
+            <div id="reviewsList" class="reviews-list">
+                <div class="loading">Загрузка отзывов...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/reviews.js"></script>
+</body>
+</html>

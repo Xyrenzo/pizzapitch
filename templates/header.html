@@ -1,0 +1,122 @@
+<!-- header.html -->
+<header class="main-header">
+    <div class="header-container">
+        <a href="/" class="logo">CareerGuide</a>
+        
+        <!-- Десктопное меню -->
+        <nav class="nav-menu">
+            <a href="/questions/?user_id={{ user_id }}" class="nav-link">Тест</a>
+            <a href="/results?user_id={{ user_id }}" class="nav-link">Результаты</a>
+            <a href="/chat?user_id={{ user_id }}" class="nav-link">Чат-бот</a>
+            <a href="/histories?user_id={{ user_id }}" class="nav-link">История</a>
+            <a href="/reviews?user_id={{ user_id }}" class="nav-link">Отзывы</a>
+        </nav>
+
+        <!-- Новая иконка гамбургера -->
+        <label class="hamburger" id="hamburgerBtn">
+            <input type="checkbox" id="hamburgerInput">
+            <svg viewBox="0 0 32 32">
+                <path class="line line-top-bottom" d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22"></path>
+                <path class="line" d="M7 16 27 16"></path>
+            </svg>
+        </label>
+    </div>
+</header>
+
+<!-- Мобильное меню -->
+<div class="mobile-menu" id="mobileMenu">
+    <a href="/questions/?user_id={{ user_id }}" class="nav-link">Тест</a>
+    <a href="/results?user_id={{ user_id }}" class="nav-link">Результаты</a>
+    <a href="/chat?user_id={{ user_id }}" class="nav-link">Чат-бот</a>
+    <a href="/histories?user_id={{ user_id }}" class="nav-link">История</a>
+    <a href="/reviews?user_id={{ user_id }}" class="nav-link">Отзывы</a>
+</div>
+
+<!-- Оверлей -->
+<div class="overlay" id="overlay"></div>
+
+<script>
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const hamburgerInput = document.getElementById('hamburgerInput');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const overlay = document.getElementById('overlay');
+    const pageContent = document.getElementById('pageContent');
+    const body = document.body;
+
+    function toggleMenu() {
+        if (!hamburgerInput || !mobileMenu || !overlay) return;
+        
+        const isActive = hamburgerInput.checked;
+        
+        if (!isActive) {
+            // Открываем меню
+            hamburgerInput.checked = true;
+            mobileMenu.classList.add('active');
+            overlay.classList.add('active');
+            
+            if (pageContent) {
+                pageContent.classList.add('pushed');
+            }
+            
+            body.style.overflow = 'hidden';
+        } else {
+            // Закрываем меню
+            hamburgerInput.checked = false;
+            mobileMenu.classList.remove('active');
+            overlay.classList.remove('active');
+            
+            if (pageContent) {
+                pageContent.classList.remove('pushed');
+            }
+            
+            body.style.overflow = '';
+        }
+    }
+
+    // Инициализация событий
+    if (hamburgerBtn && mobileMenu && overlay) {
+        hamburgerBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        // Закрытие меню при клике на ссылку
+        const mobileLinks = mobileMenu.querySelectorAll('.nav-link');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                setTimeout(toggleMenu, 200);
+            });
+        });
+    }
+
+    // Закрытие по ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && mobileMenu && mobileMenu.classList.contains('active')) {
+            toggleMenu();
+        }
+    });
+
+    // Закрытие меню при изменении размера окна
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768 && mobileMenu && mobileMenu.classList.contains('active')) {
+            toggleMenu();
+        }
+    });
+
+    // Подсветка активной страницы
+    function highlightActivePage() {
+        const currentPath = window.location.pathname.replace(/\/+$/, '');
+        const allLinks = document.querySelectorAll('.nav-link');
+        
+        allLinks.forEach(link => {
+            const linkPath = link.getAttribute('href').split('?')[0].replace(/\/+$/, '');
+            if (linkPath === currentPath || 
+                (currentPath.includes(linkPath) && linkPath !== '/')) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+    }
+
+    // Инициализация при загрузке
+    document.addEventListener('DOMContentLoaded', highlightActivePage);
+</script>

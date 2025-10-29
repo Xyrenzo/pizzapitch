@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Знаменитости и их подвиги</title>
+    <link rel="stylesheet" href="/static/css/base.css" />
+    <link rel="stylesheet" href="/static/css/histories.css" />
+    <style>
+      /* Добавляем стили для свечения активной страницы */
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+          circle at 20% 80%,
+          rgba(255, 215, 0, 0.1) 0%,
+          rgba(255, 165, 0, 0.05) 25%,
+          transparent 50%
+        ),
+        radial-gradient(
+          circle at 80% 20%,
+          rgba(255, 215, 0, 0.08) 0%,
+          rgba(255, 165, 0, 0.03) 25%,
+          transparent 50%
+        );
+        pointer-events: none;
+        z-index: -1;
+        animation: glowPulse 8s ease-in-out infinite;
+      }
+
+      @keyframes glowPulse {
+        0%, 100% {
+          opacity: 0.6;
+        }
+        50% {
+          opacity: 0.8;
+        }
+      }
+
+      /* Усиливаем свечение для активной страницы */
+      .nav-link.active {
+        position: relative;
+      }
+
+      .nav-link.active::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #ffd700, transparent);
+        border-radius: 2px;
+        animation: linkGlow 2s ease-in-out infinite;
+      }
+
+      @keyframes linkGlow {
+        0%, 100% {
+          box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+        }
+        50% {
+          box-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 25px rgba(255, 215, 0, 0.4);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    {% include "header.html" %}
+    <script>
+      // Подсветка активной страницы в навигации
+      function highlightActivePage() {
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll(".nav-link");
+
+        navLinks.forEach((link) => {
+          const linkPath = link.getAttribute("href").split("?")[0];
+          if (linkPath === currentPath) {
+            link.classList.add("active");
+          } else {
+            link.classList.remove("active");
+          }
+        });
+      }
+
+      // Инициализация при загрузке страницы
+      document.addEventListener("DOMContentLoaded", function() {
+        highlightActivePage();
+        initFilters();
+        loadCards();
+        document.getElementById("celebritiesGrid").parentNode.appendChild(sentinel);
+        observer.observe(sentinel);
+      });
+    </script>
+    <div class="page-header">
+      <h1>Знаменитости и их подвиги</h1>
+      <p>Истории великих людей, которые изменили мир</p>
+    </div>
+
+    <!-- Фильтры по типам личности -->
+    <div class="filters-container">
+      <button class="filter-btn" data-type="all">Все типы</button>
+      <button class="filter-btn" data-type="A">Тип A</button>
+      <button class="filter-btn" data-type="B">Тип B</button>
+      <button class="filter-btn" data-type="C">Тип C</button>
+      <button class="filter-btn" data-type="D">Тип D</button>
+    </div>
+
+    <div class="celebrities-grid" id="celebritiesGrid">
+      <!-- Карточки будут добавляться динамически -->
+    </div>
+
+    <script>
+      // Данные знаменитостей
+      const celebrities = [
+        {
+          type: "B",
+          name: "Дуэйн «Скала» Джонсон",
+          title: "Актер, бывший рестлер, продюсер",
+          image:
+            "/img/dueine.jpeg",
+          bio: "<strong>Дуэйн</strong> родился в бедной семье рестлера. В детстве они часто меняли жильё, жили то у родственников, то в мотелях. В колледже он делал ставку на американский футбол — это был его билет в лучшую жизнь. Но судьба распорядилась иначе: после тяжёлой травмы он потерял шанс попасть в профессиональную лигу.</br></br>Он вернулся домой без денег, без работы и без мечты. На банковском счету — <strong>всего 7 долларов</strong>. Именно тогда он сказал себе: <strong>«Это мой самый низкий пункт. Но с него я построю новую вершину»</strong>.Он решил пойти в рестлинг, как его отец, хотя его изначально не принимали всерьёз. Постепенно, через боль, травмы и унижения, он стал звездой <strong><em>WWE</em></strong>.</br></br>Позже, уже будучи кумиром <strong>миллионов</strong>, Джонсон рискнул снова — ушёл в кино. <strong>Его высмеивали, но он стал одним из самых кассовых актёров в истории, а позже — предпринимателем и филантропом.</strong>",
+          moral:
+            "Иногда тебе нужно потерять всё, чтобы наконец начать строить свою судьбу по-настоящему.",
+        },
+        {
+          type: "B",
+          name: "Ник Вуйчич",
+          title: "Мотивационный спикер",
+          image:
+            "/img/nik.jpeg",
+          bio: "Ник родился <strong>без рук и ног</strong>. Его родители испытали шок и отчаяние. Сам Ник долгое время <strong>ненавидел себя и жизнь</strong>. В школе его дразнили, он <strong>впал в депрессию и даже пытался покончить с собой в 10 лет</strong>.</br></br>Однажды, прочитав статью о мужчине с инвалидностью, который смог добиться успеха, он осознал: <strong><em>«Если кто-то смог, почему не я?»</em></strong></br>С этого момента Ник начал говорить о своей боли — сначала перед классом, потом перед тысячами.</br></br>Он основал организацию <strong><em>«Жизнь без границ»</em></strong>, выступает по всему миру, пишет книги, вдохновляет людей, которые <strong>потеряли надежду.</strong> У него семья и дети. Ник стал <strong>живым доказательством того, что физические ограничения не могут ограничить дух.</strong>",
+          moral:
+            "Ограничения — это не то, что вокруг тебя. Это то, что ты сам себе позволил поверить.",
+        },
+        {
+          type: "A",
+          name: "Майк Тайсон",
+          title: "Легендарный боксёр",
+          image:
+            "/img/mike.jpeg",
+          bio: "<strong>Майк родился в Бруклине, в районе, где выживали сильнейшие.</strong> С ранних лет он <strong>попадал в передряги, воровал, дрался, попал в тюрьму для несовершеннолетних</strong>. Там его заметил тренер <strong>Кас Д’Амато — человек, который увидел в разбитом подростке чемпиона.</strong></br></br>Кас стал ему отцом, наставником и единственным, кто поверил в него. Майк тренировался одержимо. <strong><i>В 20 лет он стал самым молодым чемпионом мира по боксу.</i></strong> Но после смерти наставника начались тюрьма, <strong><s>наркотики</s></strong>, банкротство.</br></br>После выхода из тюрьмы Тайсон начал путь очищения. Он перестал быть <strong>«железным Майком»</strong> и стал философом: выступает, пишет книги, помогает молодым спортсменам. Он сумел не просто выжить — он превратил свою историю в притчу о втором шансе.",
+          moral:
+            "Сильный человек — это не тот, кто бьёт. Это тот, кто умеет подниматься снова и снова.",
+        },
+        {
+          type: "B",
+          name: "Опра Уинфри",
+          title: "Медиамагнат и телеведущая, ставшая символом вдохновения и успеха.",
+          image:
+            "/img/Opra.jpeg",
+          bio: "Опра родилась в нищете, в маленьком городке штата <strong>Миссисипи</strong>. Её детство было пропитано болью — насилие, унижения, жизнь в доме без любви. <strong><s>В 9 лет её изнасиловали, а в 14 она родила ребёнка, который вскоре умер.</s></strong> <strong>Никто</strong> не верил, что из этой девочки выйдет хоть кто-то.</br></br>В старших классах она начала участвовать в школьных дебатах, говорить — и впервые почувствовала, что её голос может что-то значить. Позже она попала на радио, потом на телевидение. <strong>Люди почувствовали в ней что-то настоящее — боль, силу, человечность.</strong></br></br>Опра создала шоу, которое изменило телевидение. Она не просто брала интервью — она исцеляла. <strong>Её истории помогали людям поверить, что даже после тьмы можно жить и любить.</strong> Позже она открыла школы, фонды и стала символом человеческого преодоления.",
+          moral:
+            "То, что ты пережил, — не позор, а источник силы. Расскажи об этом, и ты поможешь другим выжить.",
+        },
+        {
+          type: "B",
+          name: "Нельсон Мандела",
+          title: "Борец против апартеида и первый чернокожий президент ЮАР, символ свободы и равенства.",
+          image:
+            "/img/Nelson.jpeg",
+          bio: "В молодости он боролся против режима апартеида в Южной Африке. За это его бросили в тюрьму на <strong>27 лет.</strong> 27 лет одиночества, холода, издевательств и ожидания. <u>Многие на его месте сломались бы</u>, но Мандела не озлобился. Он размышлял, как построить будущее, где не будет ненависти.</br></br>Когда его освободили, весь мир ждал, что он начнёт мстить. Но он сказал:</br><strong>'Когда я вышел за ворота тюрьмы, я понял: если я не прощу — я останусь пленником.'</strong></br></br>Он стал первым <strong>чёрным президентом ЮАР</strong> и сумел объединить страну, где ещё недавно люди убивали друг друга из-за цвета кожи. Он сделал то, что невозможно — превратил врагов в соратников.",
+          moral:
+            "Настоящая сила не в том, чтобы уничтожить врага, а в том, чтобы сделать его другом.",
+        },
+        {
+          type: "C",
+          name: "Джек Ма",
+          title: "Основатель Alibaba, превративший китайский стартап в мировую интернет-империю.",
+          image:
+            "/img/Jack.jpeg",
+          bio: "Джек Ма родился в бедной семье в Китае. <u>Не блистал в школе, трижды провалился на экзаменах.</u> Позже ему отказали при приёме в <strong>30 компаний, включая KFC.</strong> Он был просто <strong>«не тот парень».</strong></br></br>Когда он впервые увидел интернет, его поразило, что в сети нет <strong>почти никакой информации о Китае.</strong> Он понял: <strong>«Это будущее, и я должен стать его частью».</strong></br></br>Он создал <strong>Alibaba — платформу, которая изменила мировую торговлю.</strong> Его вера в коммуникацию, доверие и честность позволили миллионам малых предпринимателей по всему миру выйти на рынок.",
+          moral:
+            "Люди могут не верить в тебя — главное, чтобы ты не перестал верить в людей.",
+        },
+        {
+          type: "C",
+          name: "Стив Джобс",
+          title: "Сооснователь Apple, визионер, который вернул компанию к жизни и изменил технологический мир.",
+          image:
+            "/img/Steve.jpeg",
+          bio: "Стив был приёмным ребёнком, увлекался электроникой с юности. <em><strong>Вместе с другом Стивом Возняком он основал Apple в гараже родителей.</strong></em> В 25 лет стал <u>миллионером</u>, но всего через несколько лет совет директоров уволил его из собственной компании. Он потерял всё, что создал.</br></br>Вместо того чтобы сдаться, Джобс начал с нуля — основал компании <em>NeXT и Pixar</em>. <strong>Pixar создала первый полнометражный 3D-мультфильм — «Историю игрушек»</strong>, а Apple без него начала деградировать. Через 12 лет его позвали обратно.</br></br>Он вернулся и буквально <strong>воскресил компанию</strong>, создав <strong>iPod, iPhone, iMac</strong> — вещи, которые определили цифровую эпоху. Джобс не просто сделал продукты — он <strong>переизобрёл способ, как люди взаимодействуют с технологией.</strong>",
+          moral:
+            "Даже если ты упал с собственной вершины — это не конец. Это перерыв перед тем, как ты создашь что-то великое.",
+        },
+        {
+          type: "C",
+          name: "Марк Цукерберг",
+          gradient: true,
+          title: "ГЕНИЙ(в первую очередь), Создатель Facebook и CEO Meta, сформировавший эпоху социальных сетей.",
+          image:
+            "/img/MarkP.jpeg",
+          bio: "Марк родился в семье врачей, рано увлёкся программированием. Уже в подростковом возрасте писал программы, которые поражали преподавателей. В Гарварде он создал небольшой сайт для общения студентов — <strong><em>TheFacebook</em></strong>.</br></br>Сначала проект считали развлечением, а самого Цукерберга — чудаком. Но он увидел дальше: <em>«Люди хотят быть связаны между собой. Это не сайт — это инфраструктура человеческих отношений»</em>.</br></br>Он <strong>бросил Гарвард</strong>, чтобы развивать идею, в которую никто не верил.</br></br>Так родился Facebook — сеть, которая изменила коммуникацию на планете. Благодаря его упорству и стратегическому мышлению, Facebook вырос в Meta — компанию, создающую метавселенную.</br></br>Да, на его пути были ошибки, скандалы и давление, но Цукерберг не остановился: он стал символом <strong>непрерывного самообновления</strong>, как сам интернет.",
+          moral:
+            "Иногда ты не следуешь за трендами — ты сам становишься трендом, создавая то, что потом определит будущее.",
+        },
+        {
+          type: "C",
+          name: "Хидео Кодзима",
+          title: "Японский гейм-дизайнер и автор Metal Gear, известный своим новаторским подходом к играм.",
+          image:
+            "/img/AURAfr.jpeg",
+          bio: "Хидео с детства мечтал снимать фильмы. Но судьба занесла его в игровую индустрию, где он решил объединить игру и кинематограф. Его проекты были сложными, философскими и шли наперекор коммерции. Руководство компании <strong>Konami</strong> постоянно ограничивало его идеи.</br></br>После тридцати лет работы его буквально выгнали из компании и лишили прав на его собственное творение — <strong>Metal Gear</strong>. Это был шок для всей индустрии.</br></br>Но он не сдался. С нуля создал <strong>Kojima Productions и выпустил игру Death Stranding</strong> — притчу о связи между люди, одиночестве и надежде.</br></br>Он доказал, что видеоигры могут быть не просто <em>развлечением, а формой искусства и философского высказывания.</em></br></br>Сегодня его считают визионером, который поднял игровую индустрию на <strong>новый уровень.</strong>",
+          moral:
+            "Когда система тебя отвергает — значит, ты стоишь на пороге чего-то, что её превзойдёт."
+        },
+        {
+          type: "D",
+          name: "Стивен Хокинг",
+          title: "Физик-теоретик, Космолог",
+          image:
+            "/img/Steven.jpeg",
+          bio: "В 21 год ему поставили диагноз — <strong>боковой амиотрофический склероз (БАС).</strong> Врачи сказали, что он проживёт <u>не более двух лет.</u> Болезнь лишила его возможности <strong>двигаться и говорить.</strong> Но ум остался острым, как никогда.</br></br>Вместо того чтобы сдаться, Стивен полностью посвятил себя науке. Он научился «говорить» через <strong>компьютер</strong>, продолжал исследования чёрных дыр, преподавал, писал книги. Его ум победил тело. <strong>Он прожил более 50 лет после диагноза, доказав, что сила духа способна противостоять физическим ограничениям.</strong>",
+          moral:
+            "Ограничения не в теле — они в разуме. Когда ты не сдаёшься, сама Вселенная помогает тебе двигаться дальше."
+        },
+        {
+          type: "D",
+          name: "Анджелина Джоли",
+          title: "Актриса, Режиссёр, Посол доброй воли ООН.",
+          image: "/img/Angelina.jpeg",
+          bio: "Мир знал её как <strong>голливудскую икону</strong> и <strong>символ красоты</strong>. Но внутри она переживала кризис личности, депрессию, разрушительные отношения. В какой-то момент Джоли поняла, что её жизнь <i>не имеет глубины — всё крутилось вокруг славы.</i></br></br>Она приняла стратегическое решение — полностью изменить <u>вектор жизни</u>. Стала режиссёром, послом ООН, усыновила детей из разных стран, боролась за права женщин и беженцев. После профилактической операции (удаления груди, чтобы предотвратить рак) открыто рассказала об этом миру, вдохновив миллионы женщин быть сильными и рациональными в борьбе за здоровье.",
+          moral: "Стратегия — это не только в бизнесе, но и в жизни. Умение принять трудное решение и направить боль в пользу делает человека по-настоящему сильным."
+        },
+        {
+          type: "D",
+          name: "Сатья Наделла",
+          title: "CEO Microsoft, человек, который вернул компанию к жизни.",
+          image: "/img/Satya.jpeg",
+          bio: "До него Microsoft считали устаревшим гигантом, застрявшим в прошлом. Компания теряла позиции, инновации, доверие сотрудников. Когда Наделла стал генеральным директором, его мало кто воспринимал всерьёз.</br></br>Вместо агрессивного лидерства он выбрал стратегию <strong>эмпатии и системного мышления.</strong> Он перестроил корпоративную культуру, отказался от старого <strong>«соревновательного»</strong> подхода, перевёл фокус на облачные технологии и командную работу. В результате Microsoft снова стала одной из самых инновационных компаний мира.",
+          moral: "Стратегия — это не сила давления, а сила понимания. Истинный аналитик не разрушает старое, он обновляет систему изнутри."
+        },
+      ];
+
+      // Переменные для управления фильтрацией
+      let selectedType = "all";
+      let loadedCount = 0;
+      const batchSize = 4;
+
+      // Функция создания карточки
+      function createCard(celebrity) {
+        const card = document.createElement("div");
+        card.className = "celebrity-card";
+        card.dataset.type = celebrity.type;
+        
+        card.innerHTML = `
+          <div class="card-image">
+            <img src="${celebrity.image}" alt="${celebrity.name.replace(
+          /<[^>]+>/g,
+          ""
+        )}" />
+          </div>
+          <div class="card-content">
+            <h3 class="celebrity-name"${
+              celebrity.gradient ? ' data-gradient="true"' : ""
+            }>
+              ${celebrity.name.replace(/<[^>]+>/g, "")}
+            </h3>
+            <p class="celebrity-title">${celebrity.title}</p>
+            <p class="celebrity-bio">${celebrity.bio}</p>
+            <div class="moral-box">
+              <div class="moral-label">Мораль</div>
+              <p class="moral-text">${celebrity.moral}</p>
+            </div>
+          </div>
+        `;
+
+        // Применяем градиентный стиль только если нужно
+        const nameElement = card.querySelector(".celebrity-name");
+        if (celebrity.gradient) {
+          nameElement.style.background =
+            "linear-gradient(135deg, #667eea, #764ba2)";
+          nameElement.style.webkitBackgroundClip = "text";
+          nameElement.style.webkitTextFillColor = "transparent";
+        }
+
+        return card;
+      }
+
+      // Функция загрузки карточек с учетом фильтра
+      function loadCards() {
+        const grid = document.getElementById("celebritiesGrid");
+        const fragment = document.createDocumentFragment();
+        
+        // Фильтруем знаменитостей по выбранному типу
+        const filteredCelebrities = selectedType === "all" 
+          ? celebrities 
+          : celebrities.filter(celeb => celeb.type === selectedType);
+        
+        const end = Math.min(loadedCount + batchSize, filteredCelebrities.length);
+
+        for (let i = loadedCount; i < end; i++) {
+          fragment.appendChild(createCard(filteredCelebrities[i]));
+        }
+
+        grid.appendChild(fragment);
+        loadedCount = end;
+
+        // Анимация появления
+        setTimeout(() => {
+          const cards = grid.querySelectorAll(".celebrity-card:not(.visible)");
+          cards.forEach((card, index) => {
+            setTimeout(() => {
+              card.classList.add("visible");
+            }, index * 100);
+          });
+        }, 100);
+      }
+
+      // Функция сброса и перезагрузки карточек при смене фильтра
+      function resetAndLoadCards() {
+        const grid = document.getElementById("celebritiesGrid");
+        grid.innerHTML = "";
+        loadedCount = 0;
+        loadCards();
+        
+        // Обновляем sentinel
+        if (sentinel) {
+          sentinel.remove();
+        }
+        sentinel = document.createElement("div");
+        sentinel.style.height = "1px";
+        grid.parentNode.appendChild(sentinel);
+        observer.observe(sentinel);
+      }
+
+      // Инициализация фильтров
+      function initFilters() {
+        const filterButtons = document.querySelectorAll(".filter-btn");
+        
+        filterButtons.forEach(btn => {
+          btn.addEventListener("click", function() {
+            // Убираем активный класс со всех кнопок
+            filterButtons.forEach(b => b.classList.remove("active"));
+            
+            // Добавляем активный класс к нажатой кнопке
+            this.classList.add("active");
+            
+            // Обновляем выбранный тип
+            selectedType = this.dataset.type;
+            
+            // Перезагружаем карточки
+            resetAndLoadCards();
+          });
+        });
+        
+        // Активируем кнопку "Все типы" по умолчанию
+        document.querySelector('.filter-btn[data-type="all"]').classList.add('active');
+      }
+
+      // Intersection Observer для ленивой загрузки
+      let sentinel = document.createElement("div");
+      sentinel.style.height = "1px";
+      
+      const observerOptions = {
+        root: null,
+        rootMargin: "200px",
+        threshold: 0,
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && loadedCount < 
+              (selectedType === "all" ? celebrities.length : 
+               celebrities.filter(celeb => celeb.type === selectedType).length)) {
+            loadCards();
+
+            // Перемещаем sentinel в конец
+            document.getElementById("celebritiesGrid").parentNode.appendChild(sentinel);
+          }
+        });
+      }, observerOptions);
+
+      // Инициализация
+      document.addEventListener("DOMContentLoaded", function() {
+        initFilters();
+        loadCards();
+        document.getElementById("celebritiesGrid").parentNode.appendChild(sentinel);
+        observer.observe(sentinel);
+      });
+    </script>
+  </body>
+</html>
