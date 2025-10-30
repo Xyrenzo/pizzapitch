@@ -19,6 +19,8 @@ GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID")
 GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
 
+BASE_URL = os.getenv("RENDER_EXTERNAL_URL", "http://localhost:8000")
+
 verification_codes = {}
 oauth_states = {}
 
@@ -106,7 +108,7 @@ class AuthService:
     @staticmethod
     async def google_oauth_callback(code: str) -> Dict[str, Any]:
         try:
-            
+            redirect_uri = f"{BASE_URL}/auth/google/callback"
             
             async with httpx.AsyncClient() as client:
                 token_response = await client.post(
@@ -116,7 +118,7 @@ class AuthService:
                         "client_secret": GOOGLE_CLIENT_SECRET,
                         "code": code,
                         "grant_type": "authorization_code",
-                        "redirect_uri": "http://pizzapitch.onrender.com/auth/google/callback"
+                        "redirect_uri": redirect_uri
                     }
                 )
                 
