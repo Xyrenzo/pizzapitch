@@ -5,6 +5,8 @@ from auth.service import AuthService
 from auth.dependencies import get_client_ip
 from config import TEMPLATES_DIR, STATIC_DIR
 from fastapi.staticfiles import StaticFiles
+from auth.service import BASE_URL
+
 
 router = APIRouter(tags=["auth"])
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
@@ -81,7 +83,7 @@ def google_auth():
         f"client_id={AuthService.GOOGLE_CLIENT_ID}&"
         f"response_type=code&"
         f"scope=openid%20email%20profile&"
-        f"redirect_uri=http://localhost:8000/auth/google/callback&"
+        f"redirect_uri={BASE_URL}/auth/google/callback&"
         f"state={state}&"
         f"access_type=offline"
     )
